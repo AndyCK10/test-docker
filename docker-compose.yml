@@ -5,40 +5,7 @@ services:
     build: . # ตำแหน่ง dockerfile
     ports:
       - "8000:8000" # map port ออกมา เหมือน -p ใน docker run
-  db:
-    image: mysql:latest
-    container_name: db
-    restart: always
-    volumes:
-      - ./mysql/initdb/:/docker-entrypoint-initdb.d
-      - ./mysql/data/:/var/lib/mysql
-    command: --default-authentication-plugin=mysql_native_password
-    # environment:
-    #   MYSQL_ROOT_PASSWORD: root # กำหนด user ของ root mysql
-    #   MYSQL_DATABASE : tutorial # กำหนด database เริ่มต้นของ mysql
-    #   MYSQL_USER: root # ระบุ user ของ Database
-    #   MYSQL_PASSWORD: root # ระมุ password sav Database
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=tutorial
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-    ports:
-      - 3306:3306
-  phpmyadmin :
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
-    restart: always
-    environment:
-      PMA_HOST: db # ระบุ host ที่จะให้ phpmyadmin ไปจัดการ ซึ่งสามารถใส่เป็นชื่อ
-      PMA_PORT: 4306 # ระบุ port ของ Database
-      PMA_USER: root # ระบุ user ของ Database
-      PMA_PASSWORD: root # ระมุ password sav Database
-    ports:
-      - 8080:80
-    # depends_on :
-    #   - db
-      
+  
   # db:
   #   image: mysql:latest
   #   container_name: db
@@ -85,6 +52,33 @@ services:
   #     MYSQL_USERNAME: root
   #     MYSQL_ROOT_PASSWORD: root
   #     PMA_HOST: database # อันนี้จะเป็นชื่อ Service name ของ Database ด้านบน
+  
+  db:
+    image: mariadb
+    container_name: db
+    volumes:
+      - ./mysql/initdb/:/docker-entrypoint-initdb.d
+      - ./mysql/data/:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      PMA_HOST: db # ระบุ host ที่จะให้ phpmyadmin ไปจัดการ ซึ่งสามารถใส่เป็นชื่อ
+      PMA_PORT: 3306 # ระบุ port ของ Database
+      PMA_USER: root # ระบุ user ของ Database
+      PMA_PASSWORD: root # ระมุ password sav Database
+    ports:
+      - 3306:3306
+  phpmyadmin :
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: db # ระบุ host ที่จะให้ phpmyadmin ไปจัดการ ซึ่งสามารถใส่เป็นชื่อ
+      PMA_PORT: 3306 # ระบุ port ของ Database
+      MYSQL_USERNAME: root # ระบุ user ของ Database
+      MYSQL_ROOT_PASSWORD: root # ระมุ password sav Database
+    ports:
+      - 8080:80
+    # depends_on :
+    #   - db
 
 # networks:
 #   default:
